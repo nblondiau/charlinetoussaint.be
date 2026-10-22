@@ -32,6 +32,11 @@
 html {
   color-scheme: light dark;
   -webkit-text-size-adjust: 100%;
+  /* No double-tap-to-zoom (and no 300ms tap delay). Pinch and page zoom are
+     also disabled in the document head via the viewport meta tag. The image
+     browser sets `touch-action: none` on its own root, so zooming a photo and
+     pinching inside it keep working. */
+  touch-action: manipulation;
 }
 
 body {
