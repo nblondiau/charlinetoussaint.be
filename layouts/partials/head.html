@@ -52,6 +52,8 @@
 <script src="{{ $pswpJS.RelPermalink }}" integrity="{{ $pswpJS.Data.Integrity }}" defer></script>
 {{- $js := resources.Get "js/lightbox.js" | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- $headerJS := resources.Get "js/header.js" | minify | fingerprint }}
+<script src="{{ $headerJS.RelPermalink }}" integrity="{{ $headerJS.Data.Integrity }}" defer></script>
 {{- /* Google Analytics: emitted only when an ID is configured, so local builds
        (no HUGO_SERVICES_GOOGLEANALYTICS_ID) stay untracked. */ -}}
 {{- with site.Config.Services.GoogleAnalytics.ID }}

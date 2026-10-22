@@ -106,13 +106,20 @@ h3 {
 }
 
 .site-header {
-  /* Pinned: stays at the top of the viewport while the page scrolls.
-     Sits below the image browser (--pswp-root-z-index: 50) and the skip link. */
+  /* Sticks to the top, then slides out of the way while scrolling down and
+     back in on scroll up (assets/js/header.js). Sticky keeps its height in the
+     flow, so nothing shifts. Sits below the image browser
+     (--pswp-root-z-index: 50) and the skip link. */
   position: sticky;
   top: 0;
   z-index: 40;
   background: var(--bg);
   border-bottom: 1px solid var(--rule);
+  transition: transform 0.25s ease;
+}
+
+.site-header.is-hidden {
+  transform: translateY(-100%);
 }
 
 .site-header__title {
