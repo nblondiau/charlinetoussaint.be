@@ -1,5 +1,16 @@
 {{ define "main" }}
 {{- $images := sort (.Resources.ByType "image") "Name" -}}
+{{- /* How wide a gallery image will end up: bauhaus flows the gallery into
+       `columns: 20rem` over an 82rem page (so three columns at 1040px and above,
+       two from 696px, one below), each picture inset by 0.75rem per side. The
+       plain theme keeps a single column capped at 60rem. Declaring this
+       truthfully is what stops the browser from fetching the widest candidate
+       to fill a third-width slot; it is allowed to over-state, never to
+       under-state, or the image would be upscaled by CSS. */ -}}
+{{- $sizes := "(min-width: 65rem) calc((min(100vw, 82rem) - 5rem) / 3), (min-width: 43.5rem) calc(46vw - 1.5rem), 92vw" -}}
+{{- if ne site.Params.style "bauhaus" -}}
+  {{- $sizes = "(min-width: 64rem) 60rem, 92vw" -}}
+{{- end -}}
 <article class="album">
   {{- /* Same accent as the album's card on the home page */ -}}
   <header class="page-header" style="{{ partial "album-accent.html" . | safeCSS }}">
@@ -25,7 +36,7 @@
            data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}"
            data-pswp-srcset="{{ $full.RelPermalink }} 1x{{ if gt $large.Width $full.Width }}, {{ $large.RelPermalink }} 2x{{ end }}"
            data-caption="{{ $caption }}">
-          {{ partial "picture.html" (dict "res" $res "alt" $caption "widths" (slice 480 960 1440) "capSizes" true "loading" (cond (eq $i 0) "eager" "lazy")) }}
+          {{ partial "picture.html" (dict "res" $res "alt" $caption "widths" (slice 480 960 1440) "sizes" $sizes "loading" (cond (eq $i 0) "eager" "lazy")) }}
         </a>
       </span>
     </figure>

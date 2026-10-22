@@ -3,11 +3,10 @@
      Dict params:
        res     (required) image resource
        alt     (string)   alt text, default ""
-       sizes   (string)   sizes attribute, default "92vw"
+       sizes   (string)   sizes attribute, default "92vw". Callers own this:
+                          only they know how wide the slot the image lands in
+                          will be.
        widths  (slice)    candidate widths, default (slice 480 960 1440)
-       capSizes (bool)    gallery mode: the desktop slot is the widest file, so
-                          the browser never picks a candidate narrower than the
-                          rendered image (which CSS caps at --img-max)
        loading (string)   "lazy" (default) or "eager"
 
      Widths larger than the source are skipped, so nothing is ever upscaled.
@@ -21,7 +20,6 @@
 {{- $sizes := .sizes | default "92vw" -}}
 {{- $widths := .widths | default (slice 480 960 1440) -}}
 {{- $loading := .loading | default "lazy" -}}
-{{- $capSizes := .capSizes | default false -}}
 {{- $requests := $widths -}}
 {{- $maxWidth := index $widths (sub (len $widths) 1) -}}
 {{- if lt $res.Width $maxWidth -}}
@@ -41,9 +39,6 @@
   {{- end -}}
 {{- end -}}
 {{- $widest = int (math.Max $widest $fallback.Width) -}}
-{{- if $capSizes -}}
-  {{- $sizes = printf "(min-width: 64rem) %dpx, 92vw" $widest -}}
-{{- end -}}
 <picture>
   {{- with $avif }}
   <source type="image/avif" srcset="{{ delimit . ", " }}" sizes="{{ $sizes }}">
