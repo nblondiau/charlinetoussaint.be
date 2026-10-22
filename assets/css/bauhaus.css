@@ -53,7 +53,6 @@ h2,
 h3,
 .site-header__title,
 .card__title,
-.entry__title,
 .pager {
   font-family: var(--font);
   font-weight: 700;
@@ -239,11 +238,7 @@ h3,
   color: var(--ink);
 }
 
-/* Essays list, pager, footer */
-
-.entry {
-  border-top: 1px solid var(--ink);
-}
+/* Pager, footer */
 
 .pager {
   border-top: 2px solid var(--ink);

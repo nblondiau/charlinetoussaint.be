@@ -1,6 +1,0 @@
-{{- if gt .Paginator.TotalPages 1 }}
-<nav class="pager" aria-label="Pagination">
-  {{ with .Paginator.Prev }}<a class="pager__prev" href="{{ .URL }}">← Précédent</a>{{ end }}
-  {{ with .Paginator.Next }}<a class="pager__next" href="{{ .URL }}">Suivant →</a>{{ end }}
-</nav>
-{{- end }}

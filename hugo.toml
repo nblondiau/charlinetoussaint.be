@@ -5,9 +5,6 @@ defaultContentLanguage = 'fr'
 enableRobotsTXT = true
 disableKinds = ['taxonomy', 'term']
 
-[pagination]
-  pagerSize = 12
-
 [params]
   style = 'bauhaus'
   author = 'Charline Toussaint'
