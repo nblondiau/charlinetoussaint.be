@@ -164,26 +164,8 @@ main {
   padding-block: clamp(2rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem);
 }
 
-.intro__title {
-  margin: 0 0 1.5rem;
-}
-
 .section {
   margin-top: var(--block-gap);
-}
-
-.section__title {
-  font-size: 0.85rem;
-  font-family: var(--sans);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.section__title a {
-  text-decoration: none;
 }
 
 .page-header {
@@ -325,25 +307,6 @@ main {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin: 0;
-}
-
-.link-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.link-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-block: 0.5rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.link-list time {
-  color: var(--muted);
-  font-size: 0.85rem;
 }
 
 /* Pager */

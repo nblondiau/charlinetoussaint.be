@@ -9,7 +9,6 @@
                           the browser never picks a candidate narrower than the
                           rendered image (which CSS caps at --img-max)
        loading (string)   "lazy" (default) or "eager"
-       class   (string)   class on the <img>
 
      Widths larger than the source are skipped, so nothing is ever upscaled.
      The <img> also carries `--img-max`, the widest file actually generated:
@@ -22,7 +21,6 @@
 {{- $sizes := .sizes | default "92vw" -}}
 {{- $widths := .widths | default (slice 480 960 1440) -}}
 {{- $loading := .loading | default "lazy" -}}
-{{- $class := .class | default "" -}}
 {{- $capSizes := .capSizes | default false -}}
 {{- $requests := $widths -}}
 {{- $maxWidth := index $widths (sub (len $widths) 1) -}}
@@ -50,5 +48,5 @@
   {{- with $avif }}
   <source type="image/avif" srcset="{{ delimit . ", " }}" sizes="{{ $sizes }}">
   {{- end }}
-  <img class="{{ $class }}" src="{{ $fallback.RelPermalink }}" width="{{ $fallback.Width }}" height="{{ $fallback.Height }}" style="--img-max: {{ $widest }}px" alt="{{ $alt }}" loading="{{ $loading }}" decoding="async"{{ if eq $loading "eager" }} fetchpriority="high"{{ end }}>
+  <img src="{{ $fallback.RelPermalink }}" width="{{ $fallback.Width }}" height="{{ $fallback.Height }}" style="--img-max: {{ $widest }}px" alt="{{ $alt }}" loading="{{ $loading }}" decoding="async"{{ if eq $loading "eager" }} fetchpriority="high"{{ end }}>
 </picture>

@@ -100,12 +100,6 @@ h3,
   border-bottom: 2px solid var(--ink);
 }
 
-.intro__title {
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
-}
-
 .grid {
   column-gap: 0;
 }
