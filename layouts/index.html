@@ -1,4 +1,7 @@
 {{ define "main" }}
+{{- /* The design shows no page title here (the wordmark is a link, not a
+       heading), so the heading is exposed to assistive tech only. */ -}}
+<h1 class="visually-hidden">{{ site.Title }}</h1>
 {{- with .Content }}
 <section class="intro prose">
   {{ . }}
