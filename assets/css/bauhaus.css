@@ -85,13 +85,15 @@ h3,
   position: relative;
 }
 
+/* Black mark, i.e. the ink — which flips to the paper colour in dark mode so
+   the square never disappears into the background. */
 .site-header__title::before {
   content: "";
   position: absolute;
   left: 0;
   width: 0.8rem;
   height: 0.8rem;
-  background: var(--red);
+  background: var(--ink);
 }
 
 /* Album grid: masonry plates, each ruled above, coloured square in the title */
