@@ -70,6 +70,8 @@ h3,
   align-items: center;
   padding-block: 1.5rem;
   border-bottom: 2px solid var(--ink);
+  /* Pinned header (see main.css): match the bauhaus paper, not --bg */
+  background: var(--paper);
 }
 
 .site-header__title {
