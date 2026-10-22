@@ -4,19 +4,24 @@
        Usage: {{ partial "email.html" site.Params.email }}
 
        The address is base64'd at build time into `data-mail`; the inline script
-       below turns the element into a real mailto: link and prints the address.
-       Without JS the element stays plain text ("Écrire un courriel"), so no dead
-       link is shown. `rel="nofollow"` keeps it out of link graphs. */ -}}
+       below turns the element into a real mailto: link (with a prefilled
+       subject) and prints the address. Without JS the element stays plain text
+       ("Écrire un courriel"), so no dead link is shown. `rel="nofollow"` keeps
+       it out of link graphs.
+
+       The subject is configurable via `emailSubject` in hugo.toml. */ -}}
 {{- with . -}}
+{{- $subject := site.Params.emailSubject | default (printf "Site %s" site.Title) -}}
 <p class="site-footer__contact">
-  <a class="site-footer__email" data-mail="{{ . | encoding.Base64Encode }}">Écrire un courriel</a>
+  <a class="site-footer__email" data-mail="{{ . | encoding.Base64Encode }}" data-subject="{{ $subject }}">Écrire un courriel</a>
 </p>
 <script>
   (function () {
     var links = document.querySelectorAll('.site-footer__email[data-mail]');
     for (var i = 0; i < links.length; i++) {
       var address = atob(links[i].getAttribute('data-mail'));
-      links[i].setAttribute('href', 'mailto:' + address);
+      var subject = links[i].getAttribute('data-subject');
+      links[i].setAttribute('href', 'mailto:' + address + (subject ? '?subject=' + encodeURIComponent(subject) : ''));
       links[i].setAttribute('rel', 'nofollow');
       links[i].textContent = address;
     }
