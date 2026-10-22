@@ -5,11 +5,12 @@
        (90°), 6 on a hexadic one (60°), 12 on one hue per hour of the wheel
        (30°). Rank (not the raw weight) is used so that gaps in the weights do
        not unbalance the spacing. Lightness alternates with the rank's parity
-       and the saturation is kept moderate, so neighbouring hues read apart.
-       Returns the `style` declaration for the square in front of the album
-       title. */ -}}
+       and the saturation is raised until neighbouring hues are told apart at
+       square size. Returns the `style` declaration for the square in front of
+       the album title. */ -}}
 {{- $baseHue := 6.0 -}}   {{- /* the muted terracotta the palette was built around */ -}}
-{{- $saturation := 40 -}} {{- /* high enough to keep 30°-apart hues apart, low enough to stay quiet */ -}}
+{{- $saturation := 60 -}} {{- /* hand-tuned: enough chroma to separate 30° steps, no further; at these
+                               lightnesses the 40-80° hues still read olive rather than yellow */ -}}
 {{- $albums := (where site.RegularPages "Type" "albums").ByWeight -}}
 {{- $n := math.Max 1 (len $albums) -}}
 {{- $index := 0 -}}

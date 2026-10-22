@@ -155,10 +155,10 @@ h3,
   gap: 0.5rem;
 }
 
-/* Each album's square gets its hue from its weight (partials/album-accent.html
+/* Each album's square gets its hue from its rank (partials/album-accent.html
    sets `--accent` inline), so every album keeps the same square on its card and
-   on its own page. Desaturated and mid-toned on purpose: the squares have to
-   stay quiet on the paper and still read against the dark background. */
+   on its own page. Mid-toned on purpose, so the squares read on the paper and
+   on the dark background alike. */
 .card__title::before,
 .page-header h1::before {
   content: "";
