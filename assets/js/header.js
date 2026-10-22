@@ -39,11 +39,12 @@
     lastY = window.pageYOffset;
   });
 
-  // Desktop: nudging the pointer to the top edge brings the bar back, so it is
-  // reachable without scrolling up first.
-  var EDGE = 8; // px from the top
+  // Desktop: nudging the pointer into the band the bar occupies brings it back,
+  // so it is reachable without scrolling up first. The band is exactly as tall
+  // as the bar (measured live, so it follows the responsive header); a
+  // transform does not change offsetHeight, so a hidden bar still reports it.
   window.addEventListener('mousemove', function (event) {
-    if (!hidden || event.clientY > EDGE) return;
+    if (!hidden || event.clientY > header.offsetHeight) return;
     setHidden(false);
     lastY = window.pageYOffset;
   }, { passive: true });
