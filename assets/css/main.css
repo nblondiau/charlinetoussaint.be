@@ -3,7 +3,6 @@
   --fg: #1c1a18;
   --muted: #6d6660;
   --rule: #e2ddd6;
-  --shadow: 0 1rem 3rem rgb(28 26 24 / 12%);
   --measure: 38rem;
   --page: 74rem;
   --gap: clamp(1rem, 2.5vw, 2.5rem);
@@ -19,7 +18,6 @@
     --fg: #ece8e2;
     --muted: #a49d94;
     --rule: #2b2930;
-    --shadow: 0 1rem 3rem rgb(0 0 0 / 60%);
   }
 }
 
