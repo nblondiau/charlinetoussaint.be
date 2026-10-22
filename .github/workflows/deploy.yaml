@@ -36,6 +36,7 @@ jobs:
     - name: Build
       env:
         HUGO_SERVICES_GOOGLEANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+        HUGO_PARAMS_EMAIL: ${{ secrets.CONTACT_EMAIL }}
       run: hugo --minify --gc --baseURL "${{ steps.pages.outputs.base_url }}/"
     - name: Enforce size budget
       run: |

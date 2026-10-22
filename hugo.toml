@@ -12,6 +12,9 @@ disableKinds = ['taxonomy', 'term']
   style = 'bauhaus'
   author = 'Charline Toussaint'
   description = 'Arts plastiques — Charline Toussaint'
+  # Public mail address, shown obfuscated in the footer (partials/email.html).
+  # Not stored here: the deploy workflow passes it as HUGO_PARAMS_EMAIL from the
+  # CONTACT_EMAIL repository secret. Locally: HUGO_PARAMS_EMAIL=you@example.org hugo server
 
 [imaging]
   resampleFilter = 'Lanczos'

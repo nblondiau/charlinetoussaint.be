@@ -140,6 +140,18 @@ h3 {
   margin: 0;
 }
 
+/* Footer contact: address is injected by JS (see partials/email.html) */
+.site-footer__contact {
+  margin: 0;
+}
+
+.site-footer__email {
+  color: inherit;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2em;
+  text-transform: none; /* the bauhaus footer is uppercased; keep the address readable */
+}
+
 /* Layout blocks */
 
 main {
