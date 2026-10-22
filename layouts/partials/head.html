@@ -1,0 +1,114 @@
+{{- $title := cond .IsHome site.Title (printf "%s — %s" .Title site.Title) -}}
+{{- $desc := or .Params.description site.Params.description -}}
+{{- $style := site.Params.style | default "minimal" -}}
+{{- /* Only an album page renders a gallery (layouts/albums/single.html), so
+       only it gets PhotoSwipe: the home grid and the album cards are plain
+       links, and 67 KB of image viewer would ride along for nothing. The image
+       list comes from partials/gallery-images.html, the same partial the album
+       template lays out, so a page whose only image is a video's poster (and
+       which therefore has no lightbox link) is left out too. Keep in sync with
+       the `data-lightbox` links that lightbox.js hooks. */ -}}
+{{- $gallery := false -}}
+{{- if and (eq .Type "albums") (eq .Kind "page") -}}
+  {{- $gallery = gt (len (partial "gallery-images.html" .)) 0 -}}
+{{- end -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+{{- /* iOS Safari ignores user-scalable=no, so block its page-pinch gesture too —
+       except inside the image browser, where pinching zooms the photo. */ -}}
+<script>
+  document.addEventListener('gesturestart', function (event) {
+    var target = event.target;
+    if (target && target.closest && target.closest('.pswp')) return;
+    event.preventDefault();
+  }, { passive: false });
+</script>
+<title>{{ $title }}</title>
+{{ with $desc }}<meta name="description" content="{{ . }}">{{ end }}
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:type" content="{{ if and (eq .Kind "page") (ne .Type "albums") }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{ with $desc }}<meta property="og:description" content="{{ . }}">{{ end }}
+{{- /* Social card: `images` front matter wins (absolute URLs, served as-is),
+       otherwise the page's own cover — the album photo named by `cover`, or its
+       first photo when it has none. The home page has no image of its own, so
+       it borrows the cover of the first card in its grid: the home URL is the
+       one people paste into WhatsApp or Instagram, and it was the only one
+       sharing as a grey rectangle. */ -}}
+{{- $og := "" -}}
+{{- $ogWidth := 0 -}}
+{{- $ogHeight := 0 -}}
+{{- with .Params.images }}{{ $og = index . 0 | absURL }}{{ end -}}
+{{- if not $og -}}
+  {{- $page := . -}}
+  {{- if .IsHome -}}
+    {{- with where site.RegularPages "Type" "albums" -}}
+      {{- with index .ByWeight 0 }}{{ $page = . }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- /* Same cover resolution as partials/album-card.html */ -}}
+  {{- $cover := false -}}
+  {{- with $page.Params.cover }}{{ $cover = $page.Resources.GetMatch . }}{{ end -}}
+  {{- if not $cover -}}
+    {{- with $page.Resources.ByType "image" }}{{ $cover = index (sort . "Name") 0 }}{{ end -}}
+  {{- end -}}
+  {{- with $cover -}}
+    {{- $img := .Resize "1200x jpg q82" -}}
+    {{- $og = $img.Permalink -}}
+    {{- $ogWidth = $img.Width -}}
+    {{- $ogHeight = $img.Height -}}
+  {{- end -}}
+{{- end -}}
+{{ with $og }}<meta property="og:image" content="{{ . }}">
+{{ with $ogWidth }}<meta property="og:image:width" content="{{ . }}">
+<meta property="og:image:height" content="{{ $ogHeight }}">
+{{ end }}{{ end }}
+<meta name="twitter:card" content="{{ if $og }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ $title }}">
+{{ with $desc }}<meta name="twitter:description" content="{{ . }}">{{ end }}
+{{ with $og }}<meta name="twitter:image" content="{{ . }}">{{ end }}
+{{- /* The Jost subset bauhaus.css asks for is only discovered once that sheet is
+       parsed. Preload it so the wordmark and the album titles do not swap in a
+       beat late; the latin-ext subset is left alone, it only serves glyphs a
+       French page never uses. `crossorigin` is not optional: fonts are fetched
+       in CORS mode, and a preload without it is discarded and re-fetched.
+       static/ keeps the file unfingerprinted, so this path mirrors the
+       @font-face src in assets/css/bauhaus.css by hand. */ -}}
+{{- if eq $style "bauhaus" }}
+<link rel="preload" href="/fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+{{- end }}
+{{- /* Third-party CSS first: the theme sheets below must be able to override it
+       (equal-specificity rules otherwise lose to whichever sheet loads last). */}}
+{{- /* PhotoSwipe 5 (MIT) — vendored in assets/vendor/photoswipe, see LICENSE there */}}
+{{- if $gallery }}{{ with resources.Get "vendor/photoswipe/photoswipe.css" }}
+{{- $pswpCSS := . | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $pswpCSS.RelPermalink }}" integrity="{{ $pswpCSS.Data.Integrity }}">
+{{- end }}{{ end }}
+{{- $css := resources.Get "css/main.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- if ne $style "minimal" }}
+{{- with resources.Get (printf "css/%s.css" $style) }}
+{{- $variant := . | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $variant.RelPermalink }}" integrity="{{ $variant.Data.Integrity }}">
+{{- end }}
+{{- end }}
+{{- if $gallery }}
+{{- $pswpJS := slice (resources.Get "vendor/photoswipe/photoswipe.umd.min.js") (resources.Get "vendor/photoswipe/photoswipe-lightbox.umd.min.js") | resources.Concat "js/photoswipe.vendor.js" | fingerprint }}
+<script src="{{ $pswpJS.RelPermalink }}" integrity="{{ $pswpJS.Data.Integrity }}" defer></script>
+{{- $js := resources.Get "js/lightbox.js" | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- $headerJS := resources.Get "js/header.js" | minify | fingerprint }}
+<script src="{{ $headerJS.RelPermalink }}" integrity="{{ $headerJS.Data.Integrity }}" defer></script>
+{{- /* Google Analytics: emitted only when an ID is configured, so local builds
+       (no HUGO_SERVICES_GOOGLEANALYTICS_ID) stay untracked. */ -}}
+{{- with site.Config.Services.GoogleAnalytics.ID }}
+{{ template "_internal/google_analytics.html" $ }}
+{{- end }}

@@ -1,0 +1,17 @@
+{{- $page := . -}}
+{{- $images := sort (.Resources.ByType "image") "Name" -}}
+{{- $cover := false -}}
+{{- with .Params.cover -}}
+  {{- $cover = $page.Resources.GetMatch . -}}
+{{- end -}}
+{{- if not $cover -}}
+  {{- $cover = index $images 0 -}}
+{{- end -}}
+<a class="card" style="{{ partial "album-accent.html" . | safeCSS }}" href="{{ .RelPermalink }}">
+  <span class="card__body">
+    <span class="card__title">{{ .Title }}</span>
+  </span>
+  {{ with $cover }}
+  {{ partial "picture.html" (dict "res" . "widths" (slice 480 960) "sizes" "(min-width: 60rem) 22rem, 45vw" "alt" "") }}
+  {{ end }}
+</a>

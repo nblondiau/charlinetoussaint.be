@@ -1,0 +1,45 @@
+baseURL = 'https://charlinetoussaint.be/'
+title = 'Charline Toussaint'
+locale = 'fr-be'
+defaultContentLanguage = 'fr'
+enableRobotsTXT = true
+# No feed: the albums are not chronological and their bodies are empty, so an
+# RSS item could only ever carry a title. Turning it back on means restoring the
+# <link rel=alternate> autodiscovery tag in partials/head.html too.
+disableKinds = ['taxonomy', 'term', 'rss']
+
+[params]
+  style = 'bauhaus'
+  author = 'Charline Toussaint'
+  description = 'Arts plastiques — Charline Toussaint'
+  # Public mail address, shown obfuscated in the footer (partials/email.html).
+  # Not stored here: the deploy workflow passes it as HUGO_PARAMS_EMAIL from the
+  # CONTACT_EMAIL repository secret. Locally: HUGO_PARAMS_EMAIL=you@example.org hugo server
+  # Subject prefilled in the mailto link (default "Site <site title>")
+  emailSubject = 'Message depuis charlinetoussaint.be'
+
+[imaging]
+  resampleFilter = 'Lanczos'
+
+[imaging.jpeg]
+  quality = 82
+
+[imaging.avif]
+  quality = 60
+
+[imaging.exif]
+  disableDate = true
+  disableLatLong = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.goldmark.parser]
+  wrapStandAloneImageWithinParagraph = false
+
+# Google Analytics: track visitors even when their browser sends the
+# (deprecated) Do Not Track signal. The tag itself stays opt-in: the deploy
+# workflow maps the GOOGLE_ANALYTICS_ID repository secret to
+# HUGO_SERVICES_GOOGLEANALYTICS_ID, so local builds are not tracked.
+[privacy.googleAnalytics]
+  respectDoNotTrack = false

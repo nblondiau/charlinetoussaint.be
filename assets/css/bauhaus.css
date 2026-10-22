@@ -1,0 +1,308 @@
+/* Bauhaus / Dessau variant — overrides layered on top of main.css.
+   Activate with `style = 'bauhaus'` in hugo.toml [params]. */
+
+@font-face {
+  font-family: Jost;
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/jost-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Jost;
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/jost-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+2C60-2C7F, U+20A0-20AB, U+20AD-20C4, U+2113, U+A720-A7FF;
+}
+
+:root {
+  --paper: #f2efe6;
+  --ink: #111;
+  --muted: #6b675f;
+  --rule: #111;
+  --yellow: #f2c230;
+  --title-size: 1.25rem;
+  --page: 82rem;
+  --gap: clamp(1rem, 2.2vw, 2rem);
+  --font: Jost, "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14130f;
+    --ink: #f2efe6;
+    --muted: #a29d92;
+    --rule: #f2efe6;
+  }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3,
+.site-header__title,
+.card__title,
+.pager {
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+/* Header: solid rule, geometric mark, uppercase navigation */
+
+.site-header {
+  align-items: center;
+  padding-block: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+  /* Pinned header (see main.css): match the bauhaus paper, not --bg */
+  background: var(--paper);
+}
+
+.site-header__title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: var(--title-size);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+/* Black mark, i.e. the ink — which flips to the paper colour in dark mode so
+   the square never disappears into the background. */
+.site-header__title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 0.8rem;
+  height: 0.8rem;
+  background: var(--ink);
+}
+
+/* Album grid: masonry plates, each ruled above, coloured square in the title */
+
+.intro {
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+  border-bottom: 2px solid var(--ink);
+}
+
+.grid {
+  column-gap: 0;
+}
+
+/* The rule sits above each album rather than below, so the last album of every
+   column does not end with a dangling line. */
+.card {
+  padding: 0 0 1.5rem;
+  margin-bottom: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.card picture {
+  padding: 0.75rem;
+}
+
+.card img {
+  filter: grayscale(0);
+}
+
+.card:hover img {
+  opacity: 1;
+  filter: contrast(1.06);
+}
+
+.card__body {
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--ink);
+}
+
+/* Coloured square in front of album titles (home cards and album pages, same
+   size, spacing and colour — the colour comes from the album weight). */
+.card__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--title-size);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.page-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Each album's square gets its hue from its rank (partials/album-accent.html
+   sets `--accent` inline), so every album keeps the same square on its card and
+   on its own page. Mid-toned on purpose, so the squares read on the paper and
+   on the dark background alike. */
+.card__title::before,
+.page-header h1::before {
+  content: "";
+  flex: none;
+  width: 0.55em;
+  height: 0.55em;
+  background: var(--accent, var(--ink));
+}
+
+/* Album pages: hairline mosaic instead of a single column */
+
+/* Same plate as a home card: 1px rule, then 0.75rem, then the title. */
+.page-header {
+  margin-top: var(--block-gap);
+  padding: 0.75rem;
+  border-top: 1px solid var(--ink);
+}
+
+.page-header h1 {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.page-header__subtitle {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+/* Masonry like the album grid on the home page: images flow down the columns,
+   each plate ruled above it, no vertical separators. */
+.gallery {
+  display: block;
+  columns: 20rem;
+  column-gap: 0;
+}
+
+.gallery__item {
+  max-width: none;
+  break-inside: avoid;
+  padding: 0 0 1.5rem;
+  border-top: 1px solid var(--ink);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.gallery__item img {
+  max-height: 78vh;
+  margin: 0 auto;
+}
+
+/* Same hover cue as a home card's cover (.card:hover img), so an image reads as
+   clickable on the album page too. */
+.gallery__item:hover img {
+  /* bauhaus keeps the cover at full opacity on hover (see .card:hover img), so
+     undo the dim the plain theme applies in main.css. */
+  opacity: 1;
+  filter: contrast(1.06);
+}
+
+/* Inside the hairline frames the label sits at the cell edge and the image is
+   centred under it. */
+/* Same horizontal inset as a home card's cover (0.75rem), so adjacent columns
+   show a gutter between images. */
+.gallery__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  /* The gap to the label below the picture is the inset a home card gives its
+     cover (.card picture), so a caption reads the same distance away as the
+     album title does under a card's image. */
+  gap: 0.75rem;
+}
+
+/* The same 0.75rem margin a home card gives its cover (.card picture), on all
+   four sides: adjacent columns keep their gutter, and the image no longer sits
+   flush against the plate's rule. The picture must fill its cell for the image
+   to honour the inset instead of overflowing the column. */
+.gallery__frame picture {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+}
+
+/* The label sits under its image, inset 0.75rem on the left so it lines up with
+   the picture and with the album title under its rule. Nothing is reserved for
+   a missing caption: the label is only rendered when there is one. */
+.gallery__title {
+  padding: 0 0 0 0.75rem;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Video album: the same plate as a gallery cell (rule above, 1.5rem below, the
+   picture inset 0.75rem), but spanning the page instead of one column. */
+
+.video {
+  max-width: none;
+  padding: 0 0 1.5rem;
+  border-top: 1px solid var(--ink);
+}
+
+.video video {
+  padding: 0.75rem;
+}
+
+/* Pager, footer */
+
+.pager {
+  border-top: 2px solid var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+}
+
+.site-footer {
+  border-top: 2px solid var(--ink);
+  padding-block: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: var(--ink);
+}
+
+/* PhotoSwipe (image browser): black field, primary accent */
+
+.pswp {
+  --pswp-bg: #0a0a0a;
+  --pswp-icon-color: var(--paper);
+  --pswp-icon-color-secondary: #0a0a0a;
+}
+
+.pswp__button:hover .pswp__icn,
+.pswp__button:focus-visible .pswp__icn {
+  fill: var(--yellow);
+}
+
+.pswp__caption {
+  color: var(--yellow);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 40rem) {
+  .site-header {
+    padding-block: 1rem;
+  }
+}

@@ -1,0 +1,51 @@
+{{- /* Responsive <picture> for a Hugo image resource.
+
+     Dict params:
+       res     (required) image resource
+       alt     (string)   alt text, default ""
+       sizes   (string)   sizes attribute, default "92vw". Callers own this:
+                          only they know how wide the slot the image lands in
+                          will be.
+       widths  (slice)    candidate widths, default (slice 480 960 1440)
+       loading (string)   "lazy" (default) or "eager"
+
+     Widths larger than the source are skipped, so nothing is ever upscaled.
+     The <img> also carries `--img-max`, the widest file actually generated:
+     with `w` descriptors the browser lays the image out at the `sizes` width,
+     which would stretch a small source past 100%; the CSS rule
+     `max-width: min(100%, var(--img-max))` caps it at its real pixel width.
+
+     The JPEG fallback behind the AVIF <source> is one file capped at 960px, not
+     a srcset, on purpose: every browser in the audience decodes AVIF (Chrome 85,
+     Firefox 93, Safari 16.4), so a second JPEG candidate would only ever be
+     fetched by a browser old enough to make the extra bytes pointless. */ -}}
+{{- $res := .res -}}
+{{- $alt := .alt | default "" -}}
+{{- $sizes := .sizes | default "92vw" -}}
+{{- $widths := .widths | default (slice 480 960 1440) -}}
+{{- $loading := .loading | default "lazy" -}}
+{{- $requests := $widths -}}
+{{- $maxWidth := index $widths (sub (len $widths) 1) -}}
+{{- if lt $res.Width $maxWidth -}}
+  {{- /* Small sources: also offer the source width, otherwise the largest
+         candidate stays far below what the layout will display. */ -}}
+  {{- $requests = $requests | append $res.Width -}}
+{{- end -}}
+{{- $fallbackW := int (math.Min $res.Width 960) -}}
+{{- $fallback := $res.Resize (printf "%dx jpg" $fallbackW) -}}
+{{- $avif := slice -}}
+{{- $widest := 0 -}}
+{{- range $w := $requests -}}
+  {{- if le $w $res.Width -}}
+    {{- $r := $res.Resize (printf "%dx avif" $w) -}}
+    {{- $avif = $avif | append (printf "%s %dw" $r.RelPermalink $r.Width) -}}
+    {{- $widest = int (math.Max $widest $r.Width) -}}
+  {{- end -}}
+{{- end -}}
+{{- $widest = int (math.Max $widest $fallback.Width) -}}
+<picture>
+  {{- with $avif }}
+  <source type="image/avif" srcset="{{ delimit . ", " }}" sizes="{{ $sizes }}">
+  {{- end }}
+  <img src="{{ $fallback.RelPermalink }}" width="{{ $fallback.Width }}" height="{{ $fallback.Height }}" style="--img-max: {{ $widest }}px" alt="{{ $alt }}" loading="{{ $loading }}" decoding="async"{{ if eq $loading "eager" }} fetchpriority="high"{{ end }}>
+</picture>

@@ -1,0 +1,5 @@
+{{- /* Hugo's built-in robots.txt stops at "User-agent: *": nothing told crawlers
+       where the sitemap is, even though the file is generated. Keep the wildcard
+       open (this is a portfolio meant to be indexed) and point at the sitemap. */ -}}
+User-agent: *
+Sitemap: {{ "sitemap.xml" | absURL }}

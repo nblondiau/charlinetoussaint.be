@@ -1,0 +1,405 @@
+:root {
+  --bg: #fbfaf8;
+  --fg: #1c1a18;
+  --muted: #6d6660;
+  --rule: #e2ddd6;
+  --measure: 38rem;
+  --page: 74rem;
+  --gap: clamp(1rem, 2.5vw, 2.5rem);
+  --title-size: 1.35rem;
+  --block-gap: clamp(2rem, 6vw, 4rem);
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16151a;
+    --fg: #ece8e2;
+    --muted: #a49d94;
+    --rule: #2b2930;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+  -webkit-text-size-adjust: 100%;
+  /* No double-tap-to-zoom (and no 300ms tap delay). Pinch and page zoom are
+     also disabled in the document head via the viewport meta tag. The image
+     browser sets `touch-action: none` on its own root, so zooming a photo and
+     pinching inside it keep working. */
+  touch-action: manipulation;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* `--img-max` is set by partials/picture.html to the widest generated file, so
+   an image is never stretched beyond its real pixel width. */
+img {
+  max-width: min(100%, var(--img-max, 100%));
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--muted);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-size: var(--title-size);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+}
+
+/* Kept for assistive tech only: the home page shows no visible page title, but
+   the document still needs one heading. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Header / footer */
+
+.site-header,
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: baseline;
+  justify-content: space-between;
+  max-width: var(--page);
+  margin-inline: auto;
+  padding: 2rem clamp(1rem, 4vw, 2.5rem);
+}
+
+.site-header {
+  /* Sticks to the top, then slides out of the way while scrolling down and
+     back in on scroll up (assets/js/header.js). Sticky keeps its height in the
+     flow, so nothing shifts. Sits below the image browser
+     (--pswp-root-z-index: 50) and the skip link. */
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+  transition: transform 0.25s ease;
+}
+
+.site-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.site-header__title {
+  font-family: var(--serif);
+  font-size: var(--title-size);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.site-footer {
+  margin-top: 6rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* Footer contact: address is injected by JS (see partials/email.html) */
+.site-footer__contact {
+  margin: 0;
+}
+
+.site-footer__email {
+  color: inherit;
+  text-decoration: none;
+  text-transform: none; /* the bauhaus footer is uppercased; keep the address readable */
+}
+
+/* Hover hint kept, so the address still reads as a link without a permanent
+   underline. */
+.site-footer__email:hover,
+.site-footer__email:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2em;
+}
+
+/* Layout blocks */
+
+main {
+  max-width: var(--page);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+.intro {
+  padding-block: clamp(2rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem);
+}
+
+.section {
+  margin-top: var(--block-gap);
+}
+
+.page-header {
+  padding-block: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.page-header__subtitle {
+  color: var(--muted);
+  margin: 0.75rem 0 0;
+  max-width: var(--measure);
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h2 {
+  margin-top: 2.5rem;
+}
+
+.prose img {
+  margin-block: 2rem;
+}
+
+/* Album grid */
+
+/* Masonry: multi-column flow, so a short album does not leave a gap under it and
+   neighbouring albums are not aligned vertically. */
+.grid {
+  columns: 20rem;
+  column-gap: var(--gap);
+}
+
+.card {
+  display: block;
+  break-inside: avoid;
+  margin-bottom: var(--gap);
+  text-decoration: none;
+}
+
+.card picture {
+  display: block;
+}
+
+.card picture,
+.card img {
+  width: 100%;
+}
+
+.card img {
+  /* No placeholder fill: `--rule` is near-black in the light theme (#111) and
+     paper-white in the dark one, so it flashed as a solid block over every
+     cover still lazy-loading. The <img> carries width/height, so its box is
+     already reserved and the page shows through instead. */
+  transition: opacity 200ms ease;
+}
+
+.card:hover img {
+  opacity: 0.84;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.card__title {
+  font-family: var(--serif);
+  font-size: var(--title-size);
+}
+
+/* Gallery */
+
+.gallery {
+  display: grid;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  justify-items: center;
+}
+
+.gallery__item {
+  margin: 0;
+  width: 100%;
+  max-width: 60rem;
+  text-align: center;
+}
+
+/* Shrinks to the image width so the label sits under the image, flush with its
+   left edge. */
+.gallery__frame {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: 100%;
+}
+
+.gallery__title {
+  align-self: flex-start;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-inline: 0.25rem;
+}
+
+.gallery__item img {
+  margin-inline: auto;
+  width: auto;
+  max-height: 86vh;
+  object-fit: contain;
+  /* Same hover cue as a home card's cover (.card:hover img) */
+  transition: opacity 200ms ease;
+}
+
+.gallery__item:hover img {
+  opacity: 0.84;
+}
+
+/* Video album: the video takes the whole column rather than a gallery cell.
+   Same caps as a gallery image: never wider than the column or than its own
+   pixels (`--video-max`), never taller than 78vh, aspect ratio untouched. */
+
+.video {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 60rem;
+}
+
+.video video {
+  display: block;
+  /* `height: auto` is load-bearing: the width/height attributes reserve the
+     box, but as CSS sizes they would keep the video 576px tall when max-width
+     squeezes it on a phone. */
+  height: auto;
+  max-width: min(100%, var(--video-max, 100%));
+  max-height: 78vh;
+  margin-inline: auto;
+}
+
+/* Pager */
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.5rem;
+  font-family: var(--serif);
+}
+
+.pager a {
+  text-decoration: none;
+}
+
+/* PhotoSwipe (image browser) — vendor CSS is loaded separately; these are
+   theme overrides only. */
+
+.pswp {
+  --pswp-bg: #0a0a0c;
+  --pswp-root-z-index: 50;
+  --pswp-placeholder-bg: #14141a;
+  --pswp-preloader-color: rgb(232 228 221 / 40%);
+  --pswp-preloader-color-secondary: #e8e4dd;
+  --pswp-icon-color: #e8e4dd;
+  --pswp-icon-color-secondary: #0a0a0c;
+}
+
+.pswp__caption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0.5rem clamp(1rem, 4vw, 3rem) 1rem;
+  color: #d8d3cc;
+  font-size: 0.85rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.pswp__caption[hidden] {
+  display: none;
+}
+
+/* Mobile: no arrows, swipe instead. PhotoSwipe already fades them out on touch
+   devices, but that rule is undone as soon as any mouse event is detected, so
+   force them away on narrow viewports, coarse pointers and non-hovering
+   devices — plus the `pswp--no-arrows` class that assets/js/lightbox.js adds
+   whenever PhotoSwipe itself detects touch support. */
+/* Scoped with `.pswp` to outrank the vendor's `.pswp__button { display: block }`
+   regardless of stylesheet order. */
+@media (max-width: 40rem), (pointer: coarse), (hover: none) {
+  .pswp .pswp__button--arrow {
+    display: none;
+  }
+}
+
+.pswp.pswp--no-arrows .pswp__button--arrow {
+  display: none;
+}
+
+/* Site-wide "no motion" preference, except inside the image browser: there the
+   thumbnail morph is the requested behaviour, so its own transitions are left
+   alone (see the AnimatedPhotoSwipe wrapper in assets/js/lightbox.js). */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.pswp, .pswp *) {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,78 @@
+{{ define "main" }}
+{{- $images := partial "gallery-images.html" . -}}
+{{- $videos := .Resources.ByType "video" -}}
+{{- /* How wide a gallery image will end up: bauhaus flows the gallery into
+       `columns: 20rem` over an 82rem page (so three columns at 1040px and above,
+       two from 696px, one below), each picture inset by 0.75rem per side. The
+       plain theme keeps a single column capped at 60rem. Declaring this
+       truthfully is what stops the browser from fetching the widest candidate
+       to fill a third-width slot; it is allowed to over-state, never to
+       under-state, or the image would be upscaled by CSS. */ -}}
+{{- $sizes := "(min-width: 65rem) calc((min(100vw, 82rem) - 5rem) / 3), (min-width: 43.5rem) calc(46vw - 1.5rem), 92vw" -}}
+{{- if ne site.Params.style "bauhaus" -}}
+  {{- $sizes = "(min-width: 64rem) 60rem, 92vw" -}}
+{{- end -}}
+<article class="album">
+  {{- /* Same accent as the album's card on the home page */ -}}
+  <header class="page-header" style="{{ partial "album-accent.html" . | safeCSS }}">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.subtitle }}<p class="page-header__subtitle">{{ . }}</p>{{ end }}
+    {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+  </header>
+
+  {{- /* A video takes the whole column rather than a gallery cell, and its
+         poster is the page's `cover` image (partials/gallery-images.html keeps
+         that image out of the gallery). */ -}}
+  {{- with $videos }}
+  {{- $poster := false }}
+  {{- with $.Params.cover }}{{ $poster = $.Resources.GetMatch . }}{{ end }}
+  {{- range . }}
+  <figure class="video">
+    <video controls playsinline preload="metadata" style="--video-max: {{ with $poster }}{{ .Width }}px{{ else }}100%{{ end }}"{{ with $poster }} poster="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"{{ end }}>
+      <source src="{{ .RelPermalink }}" type="{{ .MediaType.Type }}">
+      Votre navigateur ne peut pas lire cette vidéo : <a href="{{ .RelPermalink }}">télécharger le fichier</a>.
+    </video>
+  </figure>
+  {{- end }}
+  {{- end }}
+
+  {{- with $images }}
+  <div class="gallery">
+    {{- range $i, $res := . }}
+    {{- $caption := "" -}}
+    {{- with $.Params.captions }}{{ $caption = index . $res.Name | default "" }}{{ end -}}
+    {{- $full := $res.Resize (printf "%dx jpg" (int (math.Min $res.Width 1440))) }}
+    {{- /* 2x copy for high-density screens, only when the source is big enough */ -}}
+    {{- $large := $full -}}
+    {{- if gt $res.Width 1500 -}}
+      {{- $large = $res.Resize (printf "%dx jpg" (int (math.Min $res.Width 2880))) -}}
+    {{- end -}}
+    <figure class="gallery__item">
+      <span class="gallery__frame">
+        <a href="{{ $full.RelPermalink }}" data-lightbox
+           data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}"
+           data-pswp-srcset="{{ $full.RelPermalink }} 1x{{ if gt $large.Width $full.Width }}, {{ $large.RelPermalink }} 2x{{ end }}"
+           data-caption="{{ $caption }}">
+          {{ partial "picture.html" (dict "res" $res "alt" $caption "widths" (slice 480 960 1440) "sizes" $sizes "loading" (cond (eq $i 0) "eager" "lazy")) }}
+        </a>
+        {{- /* Rendered after the picture, and only when there is one, so an
+               uncaptioned album carries no empty label band. */ -}}
+        {{ with $caption }}<span class="gallery__title">{{ . }}</span>{{ end }}
+      </span>
+    </figure>
+    {{- end }}
+  </div>
+  {{- end }}
+</article>
+
+{{- $siblings := where site.RegularPages "Type" "albums" }}
+{{- with $siblings.ByWeight }}
+{{- $n := len . }}
+{{- $idx := 0 }}
+{{- range $i, $p := . }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $idx = $i }}{{ end }}{{ end }}
+<nav class="pager" aria-label="Albums">
+  {{ with index . (mod (add $idx (sub $n 1)) $n) }}<a class="pager__prev" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}
+  {{ with index . (mod (add $idx 1) $n) }}<a class="pager__next" href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}
+</nav>
+{{- end }}
+{{ end }}
