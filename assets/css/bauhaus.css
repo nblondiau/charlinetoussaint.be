@@ -24,10 +24,7 @@
   --ink: #111;
   --muted: #6b675f;
   --rule: #111;
-  --red: #dd3b2c;
   --yellow: #f2c230;
-  --gold: #a2760c;
-  --blue: #1d4ed8;
   --title-size: 1.25rem;
   --page: 82rem;
   --gap: clamp(1rem, 2.2vw, 2rem);
@@ -158,23 +155,17 @@ h3,
   gap: 0.5rem;
 }
 
+/* Each album's square gets its hue from its weight (partials/album-accent.html
+   sets `--accent` inline), so every album keeps the same square on its card and
+   on its own page. Desaturated and mid-toned on purpose: the squares have to
+   stay quiet on the paper and still read against the dark background. */
 .card__title::before,
 .page-header h1::before {
   content: "";
   flex: none;
   width: 0.55em;
   height: 0.55em;
-  background: var(--red);
-}
-
-[data-color="1"] .card__title::before,
-[data-color="1"] h1::before {
-  background: var(--blue);
-}
-
-[data-color="2"] .card__title::before,
-[data-color="2"] h1::before {
-  background: var(--gold);
+  background: var(--accent, var(--ink));
 }
 
 /* Album pages: hairline mosaic instead of a single column */

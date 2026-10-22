@@ -1,0 +1,17 @@
+{{- /* Accent colour derived from the album's rank in the grid, spread over the
+       colour wheel (https://en.wikipedia.org/wiki/Harmony_(color)): the step is
+       360°/albumcount, so the hues are always evenly spaced and never repeat —
+       3 albums land on a triadic scheme (120°), 4 on a tetradic/square one
+       (90°), 6 on a hexadic one (60°), 12 on one hue per hour of the wheel
+       (30°). Rank (not the raw weight) is used so that gaps in the weights do
+       not unbalance the spacing. Saturation stays low, and lightness alternates
+       with the rank's parity so neighbouring hues still read apart. Returns the
+       `style` declaration for the square in front of the album title. */ -}}
+{{- $albums := (where site.RegularPages "Type" "albums").ByWeight -}}
+{{- $n := math.Max 1 (len $albums) -}}
+{{- $index := 0 -}}
+{{- range $i, $p := $albums }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $index = $i }}{{ end }}{{ end -}}
+{{- /* Start at 6°, the muted terracotta the palette was built around. */ -}}
+{{- $hue := int (math.Round (mod (add 6.0 (mul $index (div 360.0 $n))) 360.0)) -}}
+{{- $light := cond (eq (mod $index 2) 0) 42 50 -}}
+{{- return printf "--accent: hsl(%d 30%% %d%%)" $hue $light -}}
