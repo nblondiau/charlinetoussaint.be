@@ -1,0 +1,15 @@
+{{ define "main" }}
+{{- with .Content }}
+<section class="intro prose">
+  {{ . }}
+</section>
+{{- end }}
+
+{{- with where site.RegularPages "Type" "albums" }}
+<section class="section">
+  <div class="grid">
+    {{ range .ByWeight }}{{ partial "album-card.html" . }}{{ end }}
+  </div>
+</section>
+{{- end }}
+{{ end }}

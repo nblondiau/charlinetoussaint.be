@@ -1,0 +1,38 @@
+{{ define "main" }}
+{{- $images := sort (.Resources.ByType "image") "Name" -}}
+{{- $color := mod (sub (int (.Params.weight | default 1)) 1) 3 -}}
+<article class="album">
+  <header class="page-header" data-color="{{ $color }}">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.subtitle }}<p class="page-header__subtitle">{{ . }}</p>{{ end }}
+    {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+  </header>
+
+  <div class="gallery">
+    {{- range $i, $res := $images }}
+    {{- $caption := "" -}}
+    {{- with $.Params.captions }}{{ $caption = index . $res.Name | default "" }}{{ end -}}
+    {{- $full := $res.Resize (printf "%dx jpg" (int (math.Min $res.Width 1440))) }}
+    <figure class="gallery__item">
+      <span class="gallery__frame">
+        <span class="gallery__title">{{ $caption }}</span>
+        <a href="{{ $full.RelPermalink }}" data-lightbox data-full="{{ $full.RelPermalink }}" data-caption="{{ $caption }}">
+          {{ partial "picture.html" (dict "res" $res "alt" $caption "widths" (slice 480 960 1440) "capSizes" true "loading" (cond (eq $i 0) "eager" "lazy")) }}
+        </a>
+      </span>
+    </figure>
+    {{- end }}
+  </div>
+</article>
+
+{{- $siblings := where site.RegularPages "Type" "albums" }}
+{{- with $siblings.ByWeight }}
+{{- $n := len . }}
+{{- $idx := 0 }}
+{{- range $i, $p := . }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $idx = $i }}{{ end }}{{ end }}
+<nav class="pager" aria-label="Albums">
+  {{ with index . (mod (add $idx (sub $n 1)) $n) }}<a class="pager__prev" href="{{ .RelPermalink }}">← {{ .Title }}</a>{{ end }}
+  {{ with index . (mod (add $idx 1) $n) }}<a class="pager__next" href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}
+</nav>
+{{- end }}
+{{ end }}

@@ -1,0 +1,39 @@
+baseURL = 'https://charlinetoussaint.be/'
+title = 'Charline Toussaint'
+locale = 'fr-be'
+defaultContentLanguage = 'fr'
+enableRobotsTXT = true
+disableKinds = ['taxonomy', 'term']
+
+[pagination]
+  pagerSize = 12
+
+[params]
+  style = 'bauhaus'
+  author = 'Charline Toussaint'
+  description = 'Arts plastiques — Charline Toussaint'
+
+[imaging]
+  resampleFilter = 'Lanczos'
+
+[imaging.jpeg]
+  quality = 82
+
+[imaging.avif]
+  quality = 60
+
+[imaging.exif]
+  disableDate = true
+  disableLatLong = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.goldmark.parser]
+  wrapStandAloneImageWithinParagraph = false
+
+# Google Analytics: track visitors even when their browser sends the
+# (deprecated) Do Not Track signal. The tag itself stays opt-in via the
+# HUGO_SERVICES_GOOGLEANALYTICS_ID secret.
+[privacy.googleAnalytics]
+  respectDoNotTrack = false

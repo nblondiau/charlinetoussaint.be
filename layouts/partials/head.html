@@ -1,0 +1,44 @@
+{{- $title := cond .IsHome site.Title (printf "%s — %s" .Title site.Title) -}}
+{{- $desc := or .Params.description site.Params.description -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $title }}</title>
+{{ with $desc }}<meta name="description" content="{{ . }}">{{ end }}
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:type" content="{{ if and (eq .Kind "page") (ne .Type "albums") }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{ with $desc }}<meta property="og:description" content="{{ . }}">{{ end }}
+{{- $og := "" -}}
+{{- with .Params.images }}{{ $og = index . 0 | absURL }}{{ end -}}
+{{- if and (not $og) (eq .Type "albums") (eq .Kind "page") -}}
+  {{- with index (.Resources.ByType "image") 0 -}}
+    {{- $og = (.Resize "1200x jpg q82").Permalink -}}
+  {{- end -}}
+{{- end -}}
+{{ with $og }}<meta property="og:image" content="{{ . }}">{{ end }}
+{{- $css := resources.Get "css/main.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- $style := site.Params.style | default "minimal" }}
+{{- if ne $style "minimal" }}
+{{- with resources.Get (printf "css/%s.css" $style) }}
+{{- $variant := . | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $variant.RelPermalink }}" integrity="{{ $variant.Data.Integrity }}">
+{{- end }}
+{{- end }}
+{{- $js := resources.Get "js/lightbox.js" | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- /* Google Analytics: emitted only when an ID is configured, so local builds
+       (no HUGO_SERVICES_GOOGLEANALYTICS_ID) stay untracked. */ -}}
+{{- with site.Config.Services.GoogleAnalytics.ID }}
+{{ template "_internal/google_analytics.html" $ }}
+{{- end }}
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
+{{- end }}
