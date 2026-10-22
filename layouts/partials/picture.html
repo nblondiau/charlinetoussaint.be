@@ -14,7 +14,11 @@
      with `w` descriptors the browser lays the image out at the `sizes` width,
      which would stretch a small source past 100%; the CSS rule
      `max-width: min(100%, var(--img-max))` caps it at its real pixel width.
-*/ -}}
+
+     The JPEG fallback behind the AVIF <source> is one file capped at 960px, not
+     a srcset, on purpose: every browser in the audience decodes AVIF (Chrome 85,
+     Firefox 93, Safari 16.4), so a second JPEG candidate would only ever be
+     fetched by a browser old enough to make the extra bytes pointless. */ -}}
 {{- $res := .res -}}
 {{- $alt := .alt | default "" -}}
 {{- $sizes := .sizes | default "92vw" -}}
