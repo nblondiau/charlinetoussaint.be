@@ -44,10 +44,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body.no-scroll {
-  overflow: hidden;
-}
-
 /* `--img-max` is set by partials/picture.html to the widest generated file, so
    an image is never stretched beyond its real pixel width. */
 img {
@@ -332,86 +328,55 @@ main {
   text-decoration: none;
 }
 
-/* Lightbox */
+/* PhotoSwipe (image browser) — vendor CSS is loaded separately; these are
+   theme overrides only. */
 
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: grid;
-  place-items: center;
-  background: rgb(10 10 12 / 92%);
-  padding: clamp(1rem, 4vw, 3rem);
-  touch-action: pinch-zoom;
-  overscroll-behavior: contain;
-  user-select: none;
-  -webkit-user-select: none;
+.pswp {
+  --pswp-bg: #0a0a0c;
+  --pswp-root-z-index: 50;
+  --pswp-placeholder-bg: #14141a;
+  --pswp-preloader-color: rgb(232 228 221 / 40%);
+  --pswp-preloader-color-secondary: #e8e4dd;
+  --pswp-icon-color: #e8e4dd;
+  --pswp-icon-color-secondary: #0a0a0c;
 }
 
-.lightbox[hidden] {
-  display: none;
-}
-
-.lightbox__figure {
-  margin: 0;
-  display: grid;
-  gap: 0.75rem;
-  justify-items: center;
-  max-width: 100%;
-}
-
-.lightbox__img {
-  max-width: 100%;
-  max-height: 82vh;
-  width: auto;
-  object-fit: contain;
-  box-shadow: var(--shadow);
-}
-
-.lightbox__caption {
+.pswp__caption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0.5rem clamp(1rem, 4vw, 3rem) 1rem;
   color: #d8d3cc;
   font-size: 0.85rem;
   text-align: center;
-  max-width: var(--measure);
+  pointer-events: none;
 }
 
-.lightbox__button {
-  position: absolute;
-  background: none;
-  border: 0;
-  color: #e8e4dd;
-  font-size: 2rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
+.pswp__caption[hidden] {
+  display: none;
 }
 
-.lightbox__close {
-  top: 0.5rem;
-  right: 0.5rem;
-}
-
-.lightbox__prev {
-  left: 0.25rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.lightbox__next {
-  right: 0.25rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-@media (max-width: 40rem) {
-  .lightbox__prev,
-  .lightbox__next {
+/* Mobile: no arrows, swipe instead. PhotoSwipe already fades them out on touch
+   devices, but that rule is undone as soon as any mouse event is detected, so
+   force them away on narrow viewports, coarse pointers and non-hovering
+   devices — plus the `pswp--no-arrows` class that assets/js/lightbox.js adds
+   whenever PhotoSwipe itself detects touch support. */
+/* Scoped with `.pswp` to outrank the vendor's `.pswp__button { display: block }`
+   regardless of stylesheet order. */
+@media (max-width: 40rem), (pointer: coarse), (hover: none) {
+  .pswp .pswp__button--arrow {
     display: none;
   }
 }
 
+.pswp.pswp--no-arrows .pswp__button--arrow {
+  display: none;
+}
+
+/* Site-wide "no motion" preference, except inside the image browser: there the
+   thumbnail morph is the requested behaviour, so its own transitions are left
+   alone (see the AnimatedPhotoSwipe wrapper in assets/js/lightbox.js). */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *:not(.pswp, .pswp *) {
     transition: none !important;
   }
 }

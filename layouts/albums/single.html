@@ -13,10 +13,18 @@
     {{- $caption := "" -}}
     {{- with $.Params.captions }}{{ $caption = index . $res.Name | default "" }}{{ end -}}
     {{- $full := $res.Resize (printf "%dx jpg" (int (math.Min $res.Width 1440))) }}
+    {{- /* 2x copy for high-density screens, only when the source is big enough */ -}}
+    {{- $large := $full -}}
+    {{- if gt $res.Width 1500 -}}
+      {{- $large = $res.Resize (printf "%dx jpg" (int (math.Min $res.Width 2880))) -}}
+    {{- end -}}
     <figure class="gallery__item">
       <span class="gallery__frame">
         <span class="gallery__title">{{ $caption }}</span>
-        <a href="{{ $full.RelPermalink }}" data-lightbox data-full="{{ $full.RelPermalink }}" data-caption="{{ $caption }}">
+        <a href="{{ $full.RelPermalink }}" data-lightbox
+           data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}"
+           data-pswp-srcset="{{ $full.RelPermalink }} 1x{{ if gt $large.Width $full.Width }}, {{ $large.RelPermalink }} 2x{{ end }}"
+           data-caption="{{ $caption }}">
           {{ partial "picture.html" (dict "res" $res "alt" $caption "widths" (slice 480 960 1440) "capSizes" true "loading" (cond (eq $i 0) "eager" "lazy")) }}
         </a>
       </span>
