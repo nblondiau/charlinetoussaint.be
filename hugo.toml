@@ -35,7 +35,8 @@ disableKinds = ['taxonomy', 'term']
   wrapStandAloneImageWithinParagraph = false
 
 # Google Analytics: track visitors even when their browser sends the
-# (deprecated) Do Not Track signal. The tag itself stays opt-in via the
-# HUGO_SERVICES_GOOGLEANALYTICS_ID secret.
+# (deprecated) Do Not Track signal. The tag itself stays opt-in: the deploy
+# workflow maps the GOOGLE_ANALYTICS_ID repository secret to
+# HUGO_SERVICES_GOOGLEANALYTICS_ID, so local builds are not tracked.
 [privacy.googleAnalytics]
   respectDoNotTrack = false
