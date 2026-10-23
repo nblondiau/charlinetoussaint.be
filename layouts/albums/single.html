@@ -31,13 +31,15 @@
     {{- end -}}
     <figure class="gallery__item">
       <span class="gallery__frame">
-        <span class="gallery__title">{{ $caption }}</span>
         <a href="{{ $full.RelPermalink }}" data-lightbox
            data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}"
            data-pswp-srcset="{{ $full.RelPermalink }} 1x{{ if gt $large.Width $full.Width }}, {{ $large.RelPermalink }} 2x{{ end }}"
            data-caption="{{ $caption }}">
           {{ partial "picture.html" (dict "res" $res "alt" $caption "widths" (slice 480 960 1440) "sizes" $sizes "loading" (cond (eq $i 0) "eager" "lazy")) }}
         </a>
+        {{- /* Rendered after the picture, and only when there is one, so an
+               uncaptioned album carries no empty label band. */ -}}
+        {{ with $caption }}<span class="gallery__title">{{ . }}</span>{{ end }}
       </span>
     </figure>
     {{- end }}

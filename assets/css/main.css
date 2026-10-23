@@ -281,9 +281,8 @@ main {
   text-align: center;
 }
 
-/* Label above each image; the frame shrinks to the image width so the label
-   lines up with the image's left edge. */
-/* Shrinks to the image width so the label sits exactly above the image. */
+/* Shrinks to the image width so the label sits under the image, flush with its
+   left edge. */
 .gallery__frame {
   display: inline-flex;
   flex-direction: column;

@@ -212,24 +212,27 @@ h3,
   align-items: center;
   justify-content: center;
   width: 100%;
+  /* The gap to the label below the picture is the inset a home card gives its
+     cover (.card picture), so a caption reads the same distance away as the
+     album title does under a card's image. */
+  gap: 0.75rem;
 }
 
-/* Same horizontal inset as a home card's cover (0.75rem), so adjacent columns
-   show a gutter between images. The picture must fill its cell for the image to
-   honour the inset instead of overflowing the column. */
+/* The same 0.75rem margin a home card gives its cover (.card picture), on all
+   four sides: adjacent columns keep their gutter, and the image no longer sits
+   flush against the plate's rule. The picture must fill its cell for the image
+   to honour the inset instead of overflowing the column. */
 .gallery__frame picture {
   display: block;
   width: 100%;
-  padding: 0 0.75rem;
+  padding: 0.75rem;
 }
 
-/* Same inset as the album title under its rule: 0.75rem above, 0.75rem on the
-   left so the label lines up with the coloured square. `min-height` (border-box,
-   so it includes the vertical padding) keeps that offset on uncaptioned images,
-   whose label element is empty. */
+/* The label sits under its image, inset 0.75rem on the left so it lines up with
+   the picture and with the album title under its rule. Nothing is reserved for
+   a missing caption: the label is only rendered when there is one. */
 .gallery__title {
-  min-height: calc(1.25rem + 1.55em);
-  padding: 0.75rem 0 0.5rem 0.75rem;
+  padding: 0 0 0 0.75rem;
   font-family: var(--font);
   font-weight: 600;
   font-size: 0.72rem;
