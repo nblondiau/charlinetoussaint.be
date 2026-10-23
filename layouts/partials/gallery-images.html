@@ -1,0 +1,17 @@
+{{- /* The images an album page lays out in its gallery, sorted by name.
+
+     A page that carries a video uses its `cover` image as that video's poster,
+     so the poster is not laid out a second time as a gallery item. Callers:
+     layouts/albums/single.html (what to render) and partials/head.html (whether
+     the page needs PhotoSwipe at all). They must agree, or the image browser
+     would be shipped to a page without a single lightbox link. */ -}}
+{{- $images := sort (.Resources.ByType "image") "Name" -}}
+{{- $poster := "" -}}
+{{- if and .Params.cover (gt (len (.Resources.ByType "video")) 0) -}}
+  {{- with .Resources.GetMatch .Params.cover }}{{ $poster = .RelPermalink }}{{ end -}}
+{{- end -}}
+{{- $gallery := slice -}}
+{{- range $images -}}
+  {{- if ne .RelPermalink $poster }}{{ $gallery = $gallery | append . }}{{ end -}}
+{{- end -}}
+{{- return $gallery -}}

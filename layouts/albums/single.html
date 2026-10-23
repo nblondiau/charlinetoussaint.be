@@ -1,5 +1,6 @@
 {{ define "main" }}
-{{- $images := sort (.Resources.ByType "image") "Name" -}}
+{{- $images := partial "gallery-images.html" . -}}
+{{- $videos := .Resources.ByType "video" -}}
 {{- /* How wide a gallery image will end up: bauhaus flows the gallery into
        `columns: 20rem` over an 82rem page (so three columns at 1040px and above,
        two from 696px, one below), each picture inset by 0.75rem per side. The
@@ -19,8 +20,25 @@
     {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
   </header>
 
+  {{- /* A video takes the whole column rather than a gallery cell, and its
+         poster is the page's `cover` image (partials/gallery-images.html keeps
+         that image out of the gallery). */ -}}
+  {{- with $videos }}
+  {{- $poster := false }}
+  {{- with $.Params.cover }}{{ $poster = $.Resources.GetMatch . }}{{ end }}
+  {{- range . }}
+  <figure class="video">
+    <video controls playsinline preload="metadata" style="--video-max: {{ with $poster }}{{ .Width }}px{{ else }}100%{{ end }}"{{ with $poster }} poster="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"{{ end }}>
+      <source src="{{ .RelPermalink }}" type="{{ .MediaType.Type }}">
+      Votre navigateur ne peut pas lire cette vidéo : <a href="{{ .RelPermalink }}">télécharger le fichier</a>.
+    </video>
+  </figure>
+  {{- end }}
+  {{- end }}
+
+  {{- with $images }}
   <div class="gallery">
-    {{- range $i, $res := $images }}
+    {{- range $i, $res := . }}
     {{- $caption := "" -}}
     {{- with $.Params.captions }}{{ $caption = index . $res.Name | default "" }}{{ end -}}
     {{- $full := $res.Resize (printf "%dx jpg" (int (math.Min $res.Width 1440))) }}
@@ -44,6 +62,7 @@
     </figure>
     {{- end }}
   </div>
+  {{- end }}
 </article>
 
 {{- $siblings := where site.RegularPages "Type" "albums" }}

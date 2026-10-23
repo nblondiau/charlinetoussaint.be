@@ -3,9 +3,15 @@
 {{- $style := site.Params.style | default "minimal" -}}
 {{- /* Only an album page renders a gallery (layouts/albums/single.html), so
        only it gets PhotoSwipe: the home grid and the album cards are plain
-       links, and 67 KB of image viewer would ride along for nothing. Keep in
-       sync with the `data-lightbox` links that lightbox.js hooks. */ -}}
-{{- $gallery := and (eq .Type "albums") (eq .Kind "page") -}}
+       links, and 67 KB of image viewer would ride along for nothing. The image
+       list comes from partials/gallery-images.html, the same partial the album
+       template lays out, so a page whose only image is a video's poster (and
+       which therefore has no lightbox link) is left out too. Keep in sync with
+       the `data-lightbox` links that lightbox.js hooks. */ -}}
+{{- $gallery := false -}}
+{{- if and (eq .Type "albums") (eq .Kind "page") -}}
+  {{- $gallery = gt (len (partial "gallery-images.html" .)) 0 -}}
+{{- end -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 {{- /* iOS Safari ignores user-scalable=no, so block its page-pinch gesture too —
