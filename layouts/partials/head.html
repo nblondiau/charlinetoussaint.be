@@ -1,5 +1,6 @@
 {{- $title := cond .IsHome site.Title (printf "%s — %s" .Title site.Title) -}}
 {{- $desc := or .Params.description site.Params.description -}}
+{{- $style := site.Params.style | default "minimal" -}}
 {{- /* Only an album page renders a gallery (layouts/albums/single.html), so
        only it gets PhotoSwipe: the home grid and the album cards are plain
        links, and 67 KB of image viewer would ride along for nothing. Keep in
@@ -67,6 +68,16 @@
 <meta name="twitter:title" content="{{ $title }}">
 {{ with $desc }}<meta name="twitter:description" content="{{ . }}">{{ end }}
 {{ with $og }}<meta name="twitter:image" content="{{ . }}">{{ end }}
+{{- /* The Jost subset bauhaus.css asks for is only discovered once that sheet is
+       parsed. Preload it so the wordmark and the album titles do not swap in a
+       beat late; the latin-ext subset is left alone, it only serves glyphs a
+       French page never uses. `crossorigin` is not optional: fonts are fetched
+       in CORS mode, and a preload without it is discarded and re-fetched.
+       static/ keeps the file unfingerprinted, so this path mirrors the
+       @font-face src in assets/css/bauhaus.css by hand. */ -}}
+{{- if eq $style "bauhaus" }}
+<link rel="preload" href="/fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+{{- end }}
 {{- /* Third-party CSS first: the theme sheets below must be able to override it
        (equal-specificity rules otherwise lose to whichever sheet loads last). */}}
 {{- /* PhotoSwipe 5 (MIT) — vendored in assets/vendor/photoswipe, see LICENSE there */}}
@@ -76,7 +87,6 @@
 {{- end }}{{ end }}
 {{- $css := resources.Get "css/main.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
-{{- $style := site.Params.style | default "minimal" }}
 {{- if ne $style "minimal" }}
 {{- with resources.Get (printf "css/%s.css" $style) }}
 {{- $variant := . | minify | fingerprint }}
