@@ -1,5 +1,10 @@
 {{- $title := cond .IsHome site.Title (printf "%s — %s" .Title site.Title) -}}
 {{- $desc := or .Params.description site.Params.description -}}
+{{- /* Only an album page renders a gallery (layouts/albums/single.html), so
+       only it gets PhotoSwipe: the home grid and the album cards are plain
+       links, and 67 KB of image viewer would ride along for nothing. Keep in
+       sync with the `data-lightbox` links that lightbox.js hooks. */ -}}
+{{- $gallery := and (eq .Type "albums") (eq .Kind "page") -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 {{- /* iOS Safari ignores user-scalable=no, so block its page-pinch gesture too —
@@ -65,10 +70,10 @@
 {{- /* Third-party CSS first: the theme sheets below must be able to override it
        (equal-specificity rules otherwise lose to whichever sheet loads last). */}}
 {{- /* PhotoSwipe 5 (MIT) — vendored in assets/vendor/photoswipe, see LICENSE there */}}
-{{- with resources.Get "vendor/photoswipe/photoswipe.css" }}
+{{- if $gallery }}{{ with resources.Get "vendor/photoswipe/photoswipe.css" }}
 {{- $pswpCSS := . | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $pswpCSS.RelPermalink }}" integrity="{{ $pswpCSS.Data.Integrity }}">
-{{- end }}
+{{- end }}{{ end }}
 {{- $css := resources.Get "css/main.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{- $style := site.Params.style | default "minimal" }}
@@ -78,10 +83,12 @@
 <link rel="stylesheet" href="{{ $variant.RelPermalink }}" integrity="{{ $variant.Data.Integrity }}">
 {{- end }}
 {{- end }}
+{{- if $gallery }}
 {{- $pswpJS := slice (resources.Get "vendor/photoswipe/photoswipe.umd.min.js") (resources.Get "vendor/photoswipe/photoswipe-lightbox.umd.min.js") | resources.Concat "js/photoswipe.vendor.js" | fingerprint }}
 <script src="{{ $pswpJS.RelPermalink }}" integrity="{{ $pswpJS.Data.Integrity }}" defer></script>
 {{- $js := resources.Get "js/lightbox.js" | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
 {{- $headerJS := resources.Get "js/header.js" | minify | fingerprint }}
 <script src="{{ $headerJS.RelPermalink }}" integrity="{{ $headerJS.Data.Integrity }}" defer></script>
 {{- /* Google Analytics: emitted only when an ID is configured, so local builds
