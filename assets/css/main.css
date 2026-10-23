@@ -306,6 +306,12 @@ main {
   width: auto;
   max-height: 86vh;
   object-fit: contain;
+  /* Same hover cue as a home card's cover (.card:hover img) */
+  transition: opacity 200ms ease;
+}
+
+.gallery__item:hover img {
+  opacity: 0.84;
 }
 
 /* Pager */

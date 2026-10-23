@@ -203,6 +203,15 @@ h3,
   margin: 0 auto;
 }
 
+/* Same hover cue as a home card's cover (.card:hover img), so an image reads as
+   clickable on the album page too. */
+.gallery__item:hover img {
+  /* bauhaus keeps the cover at full opacity on hover (see .card:hover img), so
+     undo the dim the plain theme applies in main.css. */
+  opacity: 1;
+  filter: contrast(1.06);
+}
+
 /* Inside the hairline frames the label sits at the cell edge and the image is
    centred under it. */
 /* Same horizontal inset as a home card's cover (0.75rem), so adjacent columns
