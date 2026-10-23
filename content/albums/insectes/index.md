@@ -1,7 +1,7 @@
 ---
 title: "Insectes"
 weight: 5
-cover: "03-fly.jpg"
+cover: "04-scarab.jpg"
 captions:
   "01-scarab2.jpg": "Scarab 2"
   "02-dragonfly.jpg": "Dragonfly"
