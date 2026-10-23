@@ -24,14 +24,44 @@
 <meta property="og:type" content="{{ if and (eq .Kind "page") (ne .Type "albums") }}article{{ else }}website{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
 {{ with $desc }}<meta property="og:description" content="{{ . }}">{{ end }}
+{{- /* Social card: `images` front matter wins (absolute URLs, served as-is),
+       otherwise the page's own cover — the album photo named by `cover`, or its
+       first photo when it has none. The home page has no image of its own, so
+       it borrows the cover of the first card in its grid: the home URL is the
+       one people paste into WhatsApp or Instagram, and it was the only one
+       sharing as a grey rectangle. */ -}}
 {{- $og := "" -}}
+{{- $ogWidth := 0 -}}
+{{- $ogHeight := 0 -}}
 {{- with .Params.images }}{{ $og = index . 0 | absURL }}{{ end -}}
-{{- if and (not $og) (eq .Type "albums") (eq .Kind "page") -}}
-  {{- with index (.Resources.ByType "image") 0 -}}
-    {{- $og = (.Resize "1200x jpg q82").Permalink -}}
+{{- if not $og -}}
+  {{- $page := . -}}
+  {{- if .IsHome -}}
+    {{- with where site.RegularPages "Type" "albums" -}}
+      {{- with index .ByWeight 0 }}{{ $page = . }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- /* Same cover resolution as partials/album-card.html */ -}}
+  {{- $cover := false -}}
+  {{- with $page.Params.cover }}{{ $cover = $page.Resources.GetMatch . }}{{ end -}}
+  {{- if not $cover -}}
+    {{- with $page.Resources.ByType "image" }}{{ $cover = index (sort . "Name") 0 }}{{ end -}}
+  {{- end -}}
+  {{- with $cover -}}
+    {{- $img := .Resize "1200x jpg q82" -}}
+    {{- $og = $img.Permalink -}}
+    {{- $ogWidth = $img.Width -}}
+    {{- $ogHeight = $img.Height -}}
   {{- end -}}
 {{- end -}}
-{{ with $og }}<meta property="og:image" content="{{ . }}">{{ end }}
+{{ with $og }}<meta property="og:image" content="{{ . }}">
+{{ with $ogWidth }}<meta property="og:image:width" content="{{ . }}">
+<meta property="og:image:height" content="{{ $ogHeight }}">
+{{ end }}{{ end }}
+<meta name="twitter:card" content="{{ if $og }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ $title }}">
+{{ with $desc }}<meta name="twitter:description" content="{{ . }}">{{ end }}
+{{ with $og }}<meta name="twitter:image" content="{{ . }}">{{ end }}
 {{- /* Third-party CSS first: the theme sheets below must be able to override it
        (equal-specificity rules otherwise lose to whichever sheet loads last). */}}
 {{- /* PhotoSwipe 5 (MIT) — vendored in assets/vendor/photoswipe, see LICENSE there */}}
