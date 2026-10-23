@@ -244,7 +244,10 @@ main {
 }
 
 .card img {
-  background: var(--rule);
+  /* No placeholder fill: `--rule` is near-black in the light theme (#111) and
+     paper-white in the dark one, so it flashed as a solid block over every
+     cover still lazy-loading. The <img> carries width/height, so its box is
+     already reserved and the page shows through instead. */
   transition: opacity 200ms ease;
 }
 
