@@ -250,6 +250,19 @@ h3,
   color: var(--ink);
 }
 
+/* Video album: the same plate as a gallery cell (rule above, 1.5rem below, the
+   picture inset 0.75rem), but spanning the page instead of one column. */
+
+.video {
+  max-width: none;
+  padding: 0 0 1.5rem;
+  border-top: 1px solid var(--ink);
+}
+
+.video video {
+  padding: 0.75rem;
+}
+
 /* Pager, footer */
 
 .pager {

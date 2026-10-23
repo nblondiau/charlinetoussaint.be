@@ -314,6 +314,27 @@ main {
   opacity: 0.84;
 }
 
+/* Video album: the video takes the whole column rather than a gallery cell.
+   Same caps as a gallery image: never wider than the column or than its own
+   pixels (`--video-max`), never taller than 78vh, aspect ratio untouched. */
+
+.video {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 60rem;
+}
+
+.video video {
+  display: block;
+  /* `height: auto` is load-bearing: the width/height attributes reserve the
+     box, but as CSS sizes they would keep the video 576px tall when max-width
+     squeezes it on a phone. */
+  height: auto;
+  max-width: min(100%, var(--video-max, 100%));
+  max-height: 78vh;
+  margin-inline: auto;
+}
+
 /* Pager */
 
 .pager {
