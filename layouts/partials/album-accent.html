@@ -4,10 +4,12 @@
        3 albums land on a triadic scheme (120°), 4 on a tetradic/square one
        (90°), 6 on a hexadic one (60°), 12 on one hue per hour of the wheel
        (30°). Rank (not the raw weight) is used so that gaps in the weights do
-       not unbalance the spacing. Lightness alternates with the rank's parity
-       and the saturation is raised until neighbouring hues are told apart at
-       square size. Returns the `style` declaration for the square in front of
-       the album title. */ -}}
+       not unbalance the spacing. Pastel squares (high value, low/medium
+       saturation — https://en.wikipedia.org/wiki/Pastel_(color)) alternate
+       with muted mid-toned ones; the muted ones keep their lightness
+       alternation, and the saturation is raised until neighbouring hues are
+       told apart at square size. Returns the `style` declaration for the
+       square in front of the album title. */ -}}
 {{- $baseHue := 6.0 -}}   {{- /* the muted terracotta the palette was built around */ -}}
 {{- $saturation := 60 -}} {{- /* hand-tuned: enough chroma to separate 30° steps, no further; at these
                                lightnesses the 40-80° hues still read olive rather than yellow */ -}}
@@ -16,5 +18,9 @@
 {{- $index := 0 -}}
 {{- range $i, $p := $albums }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $index = $i }}{{ end }}{{ end -}}
 {{- $hue := int (math.Round (mod (add $baseHue (mul $index (div 360.0 $n))) 360.0)) -}}
-{{- $light := cond (eq (mod $index 2) 0) 42 50 -}}
+{{- $light := cond (eq (mod (div $index 2) 2) 0) 42 50 -}}
+{{- if eq (mod $index 2) 1 -}}
+  {{- $saturation = 70 -}} {{- /* pale tint: HSL 70%/75% is HSV 38%/93%, low/medium saturation at high value */ -}}
+  {{- $light = 75 -}}
+{{- end -}}
 {{- return printf "--accent: hsl(%d %d%% %d%%)" $hue $saturation $light -}}
