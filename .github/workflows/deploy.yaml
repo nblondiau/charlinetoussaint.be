@@ -31,7 +31,7 @@ jobs:
     - name: Install Hugo
       uses: peaceiris/actions-hugo@v3
       with:
-        hugo-version: '0.170.0'
+        hugo-version: '0.170.1'
     - name: Build
       env:
         HUGO_SERVICES_GOOGLEANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
